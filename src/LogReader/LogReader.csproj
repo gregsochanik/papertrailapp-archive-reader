@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArchiveReaderException.cs" />
     <Compile Include="DateRange.cs" />
     <Compile Include="PapertrailArchiveReader.cs" />
     <Compile Include="PapertrailArchiveReaderArguments.cs" />

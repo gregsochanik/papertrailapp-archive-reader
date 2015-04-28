@@ -29,6 +29,11 @@ namespace LogReader
 			var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, string.Format(URL_FORMAT, ToArchiveDate(date)));
 			httpRequestMessage.Headers.Add("X-Papertrail-Token", _apiKey);
 			var response = await _httpClient.SendAsync(httpRequestMessage);
+			if((int)response.StatusCode >= 400)
+			{
+				throw new ArchiveReaderException(httpRequestMessage.RequestUri , response.StatusCode, await response.Content.ReadAsStringAsync());
+			}
+
 			var readAsStreamAsync = await response.Content.ReadAsStreamAsync();
 			return new GZipStream(readAsStreamAsync, CompressionMode.Decompress);
 		}

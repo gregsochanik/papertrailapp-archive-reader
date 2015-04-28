@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using NUnit.Framework;
 
@@ -27,10 +28,20 @@ namespace LogReader.Tests
 		}
 
 		[Test]
-		public void TestName()
+		public void Creates_correct_archive_date()
 		{
 			var date = new DateTime(2014, 11, 23);
 			Assert.That(PapertrailArchiveReader.ToArchiveDate(date), Is.EqualTo("2014-11-23"));
+		}
+
+		[Test]
+		public void Not_found_file_throws_correct_error()
+		{
+			var archiveReaderException = Assert.Throws<ArchiveReaderException>(async () => { await _papertrailArchiveReader.DownloadAndUnzip(DateTime.MinValue); });
+
+			Assert.That(archiveReaderException.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+			Assert.That(archiveReaderException.RequestUri.ToString(), Is.EqualTo("https://papertrailapp.com/api/v1/archives/0001-01-01/download"));
+			Assert.That(archiveReaderException.ResponseBody, Is.Not.Empty);
 		}
 
 		[Test]
